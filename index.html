@@ -1,0 +1,635 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Костя Кортизол</title>
+<meta name="description" content="Cortisol Jeans — бэгги, морской клёш и буткат из сырого денима. Нижний Новгород.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;800&family=Onest:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+  :root{
+    color-scheme: light;
+    --paper:#F4F4F1;      /* фон страницы */
+    --studio:#E3E4DF;     /* фон фотостудии со съёмок */
+    --ink:#131313;        /* фирменный почти-чёрный */
+    --ink-2:#3A3A38;
+    --muted:#7D7E79;
+    --line:#CFD0CA;
+    --indigo:#27345C;     /* сырой деним */
+    --signal:#D8412F;     /* красный с катера */
+    --white:#FFFFFF;
+    --display:"Unbounded", "Arial Black", system-ui, sans-serif;
+    --body:"Onest", "Helvetica Neue", Arial, system-ui, sans-serif;
+    --mono:"JetBrains Mono", ui-monospace, "Consolas", monospace;
+    --gut: clamp(16px, 4vw, 48px);
+    --safe-top: env(safe-area-inset-top, 0px);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--body);-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  img{display:block;max-width:100%}
+  button{font:inherit;color:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--indigo);outline-offset:3px}
+  .wrap{padding-inline:var(--gut);max-width:1440px;margin-inline:auto}
+  .mono{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+  h1,h2,h3{text-wrap:balance;margin:0}
+
+  /* ——— шапка: серая полупрозрачная плашка, как на текущем сайте ——— */
+  .bar{position:sticky;top:var(--safe-top);z-index:40;background:rgba(19,19,19,.34);backdrop-filter:blur(14px) saturate(1.1);-webkit-backdrop-filter:blur(14px) saturate(1.1)}
+  .bar .wrap{display:flex;align-items:center;gap:24px;height:56px}
+  .bar .logo img{height:13px;width:auto}
+  .bar nav{display:flex;gap:22px;margin-left:auto}
+  .bar nav a{color:var(--white);text-decoration:none;font-size:13px;font-weight:500;letter-spacing:.04em;opacity:.9}
+  .bar nav a:hover{opacity:1;text-decoration:underline;text-underline-offset:4px}
+  .cart-btn{display:flex;align-items:center;gap:8px;background:var(--white);color:var(--ink);border:0;border-radius:999px;padding:7px 14px 7px 12px;font-size:13px;font-weight:600}
+  .cart-btn svg{width:16px;height:16px}
+  .cart-btn b{font-family:var(--mono);font-weight:600;min-width:1ch}
+  @media (max-width:760px){ .bar nav{display:none} .bar .cart-btn{margin-left:auto} }
+
+  /* ——— герой ——— */
+  .hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:0;background:var(--studio);margin-top:-56px}
+  .hero-copy{display:flex;flex-direction:column;justify-content:space-between;gap:48px;padding:112px var(--gut) 40px}
+  .hero-copy .kicker{display:flex;gap:14px;flex-wrap:wrap;color:var(--ink-2)}
+  .hero h1{font-family:var(--display);font-weight:800;font-size:clamp(34px,5.2vw,76px);line-height:.98;letter-spacing:-.02em;text-transform:uppercase}
+  .hero h1 em{font-style:normal;color:var(--indigo)}
+  .hero p.lead{max-width:40ch;font-size:17px;color:var(--ink-2);margin:20px 0 0}
+  .cta-row{display:flex;gap:12px;flex-wrap:wrap}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:48px;padding:0 22px;border:1.5px solid var(--ink);background:var(--ink);color:var(--white);text-decoration:none;font-weight:600;font-size:14px;letter-spacing:.03em;border-radius:0;transition:background .15s,color .15s}
+  .btn:hover{background:var(--indigo);border-color:var(--indigo)}
+  .btn.ghost{background:transparent;color:var(--ink)}
+  .btn.ghost:hover{background:var(--ink);color:var(--white)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .hero-photo{position:relative;min-height:520px;overflow:hidden}
+  .hero-photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 40%}
+  .hero-photo .cap{position:absolute;left:16px;bottom:16px;background:var(--white);padding:6px 10px}
+  @media (max-width:860px){
+    .hero{grid-template-columns:1fr}
+    .hero-copy{padding-top:96px;gap:32px}
+    .hero-photo{min-height:0;aspect-ratio:4/4.6}
+  }
+
+  /* ——— логотип-штамп на всю ширину ——— */
+  .stamp{background:var(--ink);padding-block:clamp(22px,4vw,44px)}
+  .stamp img{width:100%;height:auto}
+
+  /* ——— бегущая строка ——— */
+  .ticker{border-bottom:1px solid var(--line);overflow:hidden;background:var(--paper)}
+  .ticker .track{display:flex;gap:40px;width:max-content;padding-block:12px;animation:run 38s linear infinite}
+  .ticker span{white-space:nowrap}
+  .ticker i{font-style:normal;color:var(--signal)}
+  @keyframes run{to{transform:translateX(-50%)}}
+  @media (prefers-reduced-motion:reduce){.ticker .track{animation:none}}
+
+  /* ——— секции ——— */
+  section{padding-block:clamp(56px,8vw,104px)}
+  .sec-head{display:flex;align-items:end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:28px}
+  .sec-head h2{font-family:var(--display);font-weight:800;font-size:clamp(28px,3.6vw,48px);text-transform:uppercase;letter-spacing:-.01em;line-height:1}
+  .sec-head p{margin:0;color:var(--muted);max-width:46ch}
+
+  /* ——— каталог ——— */
+  .filters{display:flex;flex-direction:column;gap:12px;margin-bottom:28px}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .chips .label{margin-right:6px;color:var(--muted)}
+  .chip{border:1px solid var(--line);background:transparent;padding:8px 14px;font-size:13px;font-weight:500;letter-spacing:.03em;text-transform:uppercase;border-radius:999px}
+  .chip:hover{border-color:var(--ink)}
+  .chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--white)}
+  .chip small{font-family:var(--mono);font-size:11px;opacity:.6;margin-left:6px}
+  .toggle{display:inline-flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-2);cursor:pointer;margin-left:auto}
+  .toggle input{accent-color:var(--ink);width:16px;height:16px}
+
+  .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px 14px}
+  @media (max-width:1080px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media (max-width:720px){.grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 10px}}
+  .card{display:flex;flex-direction:column;gap:10px;background:none;border:0;padding:0;text-align:left}
+  .card .ph{position:relative;aspect-ratio:4/5;background:var(--studio);overflow:hidden}
+  .card .ph img{width:100%;height:100%;object-fit:cover;transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+  .card:hover .ph img{transform:scale(1.04)}
+  .card.is-sold .ph img{filter:grayscale(.55) contrast(.92);opacity:.78}
+  .tag{position:absolute;left:10px;top:10px;padding:5px 8px;background:var(--white);color:var(--ink);font-family:var(--mono);font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .tag.pre{background:var(--indigo);color:var(--white)}
+  .tag.sold{background:var(--ink);color:var(--white)}
+  .tag.soon{background:var(--white);color:var(--ink);outline:1px solid var(--ink);outline-offset:-1px}
+  .card h3{font-family:var(--body);font-weight:500;font-size:15px;line-height:1.3}
+  .card .meta{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+  .price{font-family:var(--mono);font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+  .card .fit{color:var(--muted)}
+  .card.is-sold .price{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+  .empty{padding:48px 0;color:var(--muted)}
+
+  /* ——— посадки ——— */
+  .fits{background:var(--studio)}
+  .fit-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+  @media (max-width:820px){.fit-row{grid-template-columns:1fr}}
+  .fit-card{background:var(--paper);display:grid;grid-template-columns:96px 1fr;gap:20px;padding:22px;align-items:start;border:0;text-align:left}
+  .fit-card:hover{outline:1.5px solid var(--ink)}
+  .fit-card svg{width:96px;height:150px}
+  .fit-card svg path{fill:var(--indigo)}
+  .fit-card h3{font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;margin-bottom:8px}
+  .fit-card p{margin:0 0 14px;color:var(--ink-2);font-size:14.5px}
+  .fit-card .mono{color:var(--muted)}
+
+  /* ——— словарь ——— */
+  .terms{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1.5px solid var(--ink)}
+  @media (max-width:820px){.terms{grid-template-columns:1fr}}
+  .term{padding:24px 24px 28px 0;border-bottom:1px solid var(--line)}
+  .term + .term{padding-left:24px;border-left:1px solid var(--line)}
+  @media (max-width:820px){.term + .term{padding-left:0;border-left:0}}
+  .term dt{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:24px;text-transform:uppercase;margin-bottom:10px}
+  .term dd{margin:0;color:var(--ink-2);max-width:44ch}
+  .dot{width:12px;height:12px;flex:none}
+
+  /* ——— галерея ——— */
+  .gallery{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+  .gallery figure{margin:0;background:var(--studio);overflow:hidden;aspect-ratio:1}
+  .gallery figure:nth-child(1),.gallery figure:nth-child(6){grid-column:span 2;grid-row:span 2}
+  .gallery img{width:100%;height:100%;object-fit:cover}
+  @media (max-width:820px){.gallery{grid-template-columns:repeat(2,minmax(0,1fr))}.gallery figure:nth-child(1),.gallery figure:nth-child(6){grid-column:span 2;grid-row:auto}}
+
+  /* ——— телеграм ——— */
+  .tg{background:var(--indigo);color:var(--white)}
+  .tg .wrap{display:grid;grid-template-columns:1.2fr 1fr;gap:40px;align-items:center}
+  @media (max-width:820px){.tg .wrap{grid-template-columns:1fr}}
+  .tg h2{font-family:var(--display);font-weight:800;font-size:clamp(40px,6vw,88px);line-height:.95;text-transform:uppercase}
+  .tg ul{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:10px;font-size:18px}
+  .tg li{display:flex;gap:12px;align-items:baseline;border-bottom:1px solid rgba(255,255,255,.2);padding-bottom:10px}
+  .tg li span{font-family:var(--mono);font-size:12px;opacity:.6}
+  .tg .btn{background:var(--white);color:var(--ink);border-color:var(--white)}
+  .tg .btn:hover{background:transparent;color:var(--white)}
+
+  /* ——— FAQ + доставка ——— */
+  .faq-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr);gap:48px}
+  @media (max-width:900px){.faq-grid{grid-template-columns:1fr}}
+  .label-card{background:var(--white);border:1.5px solid var(--ink);padding:22px;display:grid;gap:14px;align-self:start;font-family:var(--mono);font-size:13px}
+  .label-card .row{display:flex;justify-content:space-between;gap:16px;border-bottom:1px dashed var(--line);padding-bottom:10px}
+  .label-card .row:last-child{border-bottom:0;padding-bottom:0}
+  .label-card .row span:first-child{color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-size:11.5px}
+  .label-card .row span:last-child{text-align:right}
+  .label-card .hd{font-family:var(--display);font-weight:800;font-size:16px;text-transform:uppercase;letter-spacing:0}
+  details{border-bottom:1px solid var(--line)}
+  details:first-of-type{border-top:1.5px solid var(--ink)}
+  summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:16px;padding:20px 0;font-weight:600;font-size:17px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";font-family:var(--mono);font-size:20px;line-height:1;transition:transform .2s}
+  details[open] summary::after{transform:rotate(45deg)}
+  details .ans{padding:0 0 22px;color:var(--ink-2);max-width:62ch}
+  details .ans p{margin:0 0 10px}
+
+  /* ——— подвал ——— */
+  footer{background:var(--ink);color:var(--white);padding-block:56px 32px}
+  footer .cols{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px;margin-bottom:56px}
+  @media (max-width:760px){footer .cols{grid-template-columns:repeat(2,minmax(0,1fr))}}
+  footer h4{margin:0 0 14px;font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#8d8e89;font-weight:400}
+  footer ul{list-style:none;padding:0;margin:0;display:grid;gap:8px;font-size:14px}
+  footer a{text-decoration:none;opacity:.9}
+  footer a:hover{text-decoration:underline;text-underline-offset:3px}
+  footer .big img{width:100%;height:auto;opacity:.95}
+  footer .fine{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:28px;color:#8d8e89;font-size:12.5px}
+
+  /* ——— модалка товара и корзина ——— */
+  .scrim{position:fixed;inset:0;background:rgba(19,19,19,.5);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+  .scrim.on{opacity:1;pointer-events:auto}
+  .sheet{position:fixed;z-index:70;background:var(--paper);transition:transform .28s cubic-bezier(.2,.7,.2,1)}
+  .pdp{left:50%;top:50%;width:min(980px,calc(100vw - 32px));max-height:calc(100dvh - 48px);overflow:auto;transform:translate(-50%,-46%) scale(.98);opacity:0;pointer-events:none;display:grid;grid-template-columns:1fr 1fr;transition:transform .25s,opacity .2s}
+  .pdp.on{transform:translate(-50%,-50%);opacity:1;pointer-events:auto}
+  .pdp .ph{background:var(--studio);aspect-ratio:4/5}
+  .pdp .ph img{width:100%;height:100%;object-fit:cover}
+  .pdp .body{padding:28px;display:flex;flex-direction:column;gap:18px}
+  .pdp h3{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.1;text-transform:uppercase}
+  .pdp .price{font-size:20px}
+  .pdp .split{color:var(--muted);font-size:13px;margin-top:4px}
+  .sizes{display:flex;gap:6px;flex-wrap:wrap}
+  .size{min-width:48px;height:42px;border:1px solid var(--line);background:var(--white);font-family:var(--mono);font-size:13px}
+  .size[aria-pressed="true"]{background:var(--ink);color:var(--white);border-color:var(--ink)}
+  .note{font-size:13.5px;color:var(--ink-2);background:var(--studio);padding:12px 14px}
+  .x{position:absolute;right:10px;top:10px;width:38px;height:38px;border:0;background:var(--white);font-size:20px;line-height:1}
+  @media (max-width:760px){.pdp{grid-template-columns:1fr}.pdp .ph{aspect-ratio:1}}
+
+  .drawer{top:0;right:0;bottom:0;width:min(420px,100vw);transform:translateX(100%);display:flex;flex-direction:column;padding-top:var(--safe-top)}
+  .drawer.on{transform:none}
+  .drawer header{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}
+  .drawer header h3{font-family:var(--display);font-weight:800;font-size:18px;text-transform:uppercase}
+  .drawer .x{position:static}
+  .lines{flex:1;overflow:auto;padding:8px 20px}
+  .line{display:grid;grid-template-columns:64px 1fr auto;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);align-items:start}
+  .line img{width:64px;height:80px;object-fit:cover;background:var(--studio)}
+  .line h4{margin:0 0 4px;font-size:14px;font-weight:500;line-height:1.3}
+  .line .mono{color:var(--muted);font-size:11px}
+  .line .rm{border:0;background:none;color:var(--muted);font-size:12px;text-decoration:underline;padding:4px 0}
+  .drawer footer{background:var(--paper);color:var(--ink);padding:18px 20px calc(18px + env(safe-area-inset-bottom,0px));border-top:1.5px solid var(--ink);display:grid;gap:12px}
+  .total{display:flex;justify-content:space-between;font-weight:600}
+  .done{display:none;font-size:13.5px;background:var(--studio);padding:12px 14px}
+  .done.on{display:block}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Костя Кортизол — на главную"><img src="img/logo.png" alt="Костя Кортизол" width="220" height="13"></a>
+    <nav aria-label="Разделы">
+      <a href="#catalog">Каталог</a>
+      <a href="#fits">Посадки</a>
+      <a href="#gallery">Галерея</a>
+      <a href="#faq">Доставка и FAQ</a>
+    </nav>
+    <button class="cart-btn" id="openCart" aria-label="Открыть корзину">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 8h14l-1 12H6L5 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+      Корзина <b id="cartCount">0</b>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <div class="hero">
+    <div class="hero-copy">
+      <div class="kicker mono"><span>Cortisol Jeans</span><span>/</span><span>Нижний Новгород</span></div>
+      <div>
+        <h1>Широкие джинсы из&nbsp;<em>сырого денима</em></h1>
+        <p class="lead">Бэгги, морской клёш и буткат. Шьём небольшими партиями, продаём через предзаказ до&nbsp;дропа, пока цена ниже.</p>
+      </div>
+      <div class="cta-row">
+        <a class="btn" href="#catalog">Смотреть каталог</a>
+        <a class="btn ghost" href="https://t.me/cortisoljeans" target="_blank" rel="noopener">Телеграм-канал</a>
+      </div>
+    </div>
+    <div class="hero-photo">
+      <img src="img/hero.jpg" alt="Костя на красном катере в голубых бэгги-джинсах и чёрной джинсовой рубашке на молнии">
+      <span class="cap mono">На фото: Голубые бэгги + рубашка на молнии</span>
+    </div>
+  </div>
+
+  <div class="stamp"><div class="wrap"><img src="img/logo.png" alt="" width="1200" height="71"></div></div>
+
+  <div class="ticker mono" aria-hidden="true">
+    <div class="track" id="ticker"></div>
+  </div>
+
+  <section id="catalog">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Каталог</h2>
+        <p>Метка на фото показывает статус вещи: предзаказ, распродано или скоро в&nbsp;наличии.</p>
+      </div>
+      <div class="filters">
+        <div class="chips" id="catChips" role="group" aria-label="Категория"></div>
+        <div class="chips" id="fitChips" role="group" aria-label="Посадка джинсов">
+          <span class="label mono">Посадка</span>
+        </div>
+        <div class="chips">
+          <label class="toggle" for="hideSold"><input type="checkbox" id="hideSold"> Скрыть распроданное</label>
+        </div>
+      </div>
+      <div class="grid" id="grid"></div>
+      <p class="empty" id="empty" hidden>По этим фильтрам ничего нет. Сбросьте посадку или покажите распроданное.</p>
+    </div>
+  </section>
+
+  <section class="fits" id="fits">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Три посадки</h2>
+        <p>Все джинсы шьются в трёх кроях. Нажмите на посадку, чтобы увидеть модели в каталоге.</p>
+      </div>
+      <div class="fit-row">
+        <button class="fit-card" data-fit="baggy">
+          <svg viewBox="0 0 96 150" aria-hidden="true"><path d="M20 4h56l4 20 8 122H56L48 44 40 146H8l8-122z"/></svg>
+          <div><h3>Бэгги</h3><p>Свободные по всей длине, широкая прямая штанина ложится складками на обувь.</p><span class="mono">от 6 990 ₽</span></div>
+        </button>
+        <button class="fit-card" data-fit="flare">
+          <svg viewBox="0 0 96 150" aria-hidden="true"><path d="M24 4h48l3 20 4 70 15 52H57L48 44 39 146H2l15-52 4-70z"/></svg>
+          <div><h3>Морской клёш</h3><p>Посадка по бедру и резкое расширение от колена. Силуэт из флотской формы.</p><span class="mono">от 7 990 ₽</span></div>
+        </button>
+        <button class="fit-card" data-fit="bootcut">
+          <svg viewBox="0 0 96 150" aria-hidden="true"><path d="M24 4h48l3 20 3 78 8 44H56L48 44 40 146H10l8-44 3-78z"/></svg>
+          <div><h3>Буткат</h3><p>Прямые до колена, с небольшим расширением книзу, чтобы штанина садилась на ботинок.</p><span class="mono">от 7 290 ₽</span></div>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section id="terms">
+    <div class="wrap">
+      <div class="sec-head"><h2>Как у нас устроены продажи</h2></div>
+      <dl class="terms">
+        <div class="term">
+          <dt><span class="dot" style="background:var(--indigo)"></span>Предзаказ</dt>
+          <dd>Вещь ещё на производстве. Вы бронируете её заранее и платите меньше, чем на дропе. Потом цена вырастет или вещь закончится.</dd>
+        </div>
+        <div class="term">
+          <dt><span class="dot" style="background:var(--signal)"></span>Дроп</dt>
+          <dd>День релиза. Первыми о дате узнают подписчики телеграм-канала, там же открываются ранние показы.</dd>
+        </div>
+        <div class="term">
+          <dt><span class="dot" style="background:var(--ink)"></span>Sold out</dt>
+          <dd>Партия распродана полностью. Следите за каналом: часть моделей возвращается в новых цветах.</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="gallery" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Галерея</h2>
+        <p>Съёмки коллекций. Всё на фото можно найти в каталоге или дождаться в следующем дропе.</p>
+      </div>
+      <div class="gallery" id="galleryGrid"></div>
+    </div>
+  </section>
+
+  <section class="tg">
+    <div class="wrap">
+      <h2>Салют!</h2>
+      <div>
+        <p style="margin:0 0 18px;opacity:.8">Следи за нашим телеграм-каналом, там появляется всё раньше, чем на сайте:</p>
+        <ul>
+          <li><span>01</span>Лайв-контент со съёмок и производства</li>
+          <li><span>02</span>Ранние показы до дропа</li>
+          <li><span>03</span>Эксклюзивные акции</li>
+          <li><span>04</span>Чат нашей семьи</li>
+        </ul>
+        <a class="btn" href="https://t.me/cortisoljeans" target="_blank" rel="noopener">Подписаться: t.me/cortisoljeans</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <div class="wrap">
+      <div class="sec-head"><h2>Доставка и вопросы</h2></div>
+      <div class="faq-grid">
+        <div class="label-card" aria-label="Кратко о доставке">
+          <div class="hd">Бирка заказа</div>
+          <div class="row"><span>Отправка</span><span>2 рабочих дня</span></div>
+          <div class="row"><span>Откуда</span><span>Нижний Новгород</span></div>
+          <div class="row"><span>Служба</span><span>СДЭК</span></div>
+          <div class="row"><span>Россия</span><span>2–14 раб. дней</span></div>
+          <div class="row"><span>Беларусь, Казахстан</span><span>5–14 раб. дней</span></div>
+          <div class="row"><span>Другие страны</span><span>через t.me/cortisolsupport</span></div>
+          <div class="row"><span>Трек-номер</span><span>пришлём в Телеграм</span></div>
+        </div>
+        <div>
+          <details open>
+            <summary>Сколько времени занимает доставка?</summary>
+            <div class="ans"><p>Отправляем СДЭКом из Нижнего Новгорода в течение двух рабочих дней. По России посылка идёт 2–14 рабочих дней, в Беларусь и Казахстан 5–14.</p><p>Заказы в другие страны оформляем только в Телеграме: t.me/cortisolsupport.</p></div>
+          </details>
+          <details>
+            <summary>Как сделать заказ?</summary>
+            <div class="ans"><p>Добавьте вещь в корзину, выберите размер и перейдите к оформлению.</p></div>
+          </details>
+          <details>
+            <summary>Как оплатить?</summary>
+            <div class="ans"><p>В корзине доступны почти все способы оплаты, в том числе Долями: четыре платежа раз в две недели.</p></div>
+          </details>
+          <details>
+            <summary>Как забрать и отследить заказ?</summary>
+            <div class="ans"><p>После отправки пришлём трек-номер в Телеграм, который вы укажете при оформлении. Отслеживайте посылку на сайте или в приложении СДЭК и забирайте в отделении, когда она приедет.</p></div>
+          </details>
+          <details>
+            <summary>Можно ли вернуть товар?</summary>
+            <div class="ans"><p>Да. Условия возврата описаны на странице «Возврат», с вопросами пишите в поддержку: t.me/cortisolsupport.</p></div>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>Одежда</h4>
+        <ul>
+          <li><a href="#catalog" data-go-cat="jeans">Джинсы</a></li>
+          <li><a href="#catalog" data-go-cat="shorts">Шорты</a></li>
+          <li><a href="#catalog" data-go-cat="tees">Футболки</a></li>
+          <li><a href="#catalog" data-go-cat="outer">Верхняя одежда</a></li>
+          <li><a href="#catalog" data-go-cat="acc">Аксессуары</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Соц. сети</h4>
+        <ul>
+          <li><a href="https://t.me/cortisoljeans" target="_blank" rel="noopener">Телеграм</a></li>
+          <li><a href="https://www.tiktok.com/@cortisolj" target="_blank" rel="noopener">TikTok</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Поддержка</h4>
+        <ul>
+          <li><a href="http://t.me/cortisolsupport" target="_blank" rel="noopener">t.me/cortisolsupport</a></li>
+          <li style="user-select:all">cortisoljeans@mail.ru</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Документы</h4>
+        <ul>
+          <li><a href="https://www.cortisoljeans.ru/contractoffer" target="_blank" rel="noopener">Договор оферты</a></li>
+          <li><a href="https://www.cortisoljeans.ru/confid" target="_blank" rel="noopener">Политика конфиденциальности</a></li>
+          <li><a href="https://www.cortisoljeans.ru/cookie" target="_blank" rel="noopener">Политика cookie</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="big"><img src="img/logo.png" alt="Костя Кортизол" width="1200" height="71"></div>
+    <div class="fine"><span>© Cortisol Jeans, 2026</span><span>Сшито в России</span></div>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="sheet pdp" id="pdp" role="dialog" aria-modal="true" aria-labelledby="pdpTitle">
+  <div class="ph"><img id="pdpImg" src="" alt=""></div>
+  <div class="body">
+    <button class="x" id="pdpClose" aria-label="Закрыть">×</button>
+    <span class="mono" id="pdpCat" style="color:var(--muted)"></span>
+    <h3 id="pdpTitle"></h3>
+    <div><div class="price" id="pdpPrice"></div><div class="split" id="pdpSplit"></div></div>
+    <div>
+      <div class="mono" style="margin-bottom:8px;color:var(--muted)">Размер</div>
+      <div class="sizes" id="pdpSizes" role="group" aria-label="Размер"></div>
+    </div>
+    <div class="note" id="pdpNote"></div>
+    <button class="btn" id="pdpAdd">В корзину</button>
+  </div>
+</div>
+
+<aside class="sheet drawer" id="drawer" aria-label="Корзина" role="dialog" aria-modal="true">
+  <header><h3>Корзина</h3><button class="x" id="drawerClose" aria-label="Закрыть корзину">×</button></header>
+  <div class="lines" id="lines"></div>
+  <footer>
+    <div class="total"><span>Итого</span><span class="price" id="sum">0 ₽</span></div>
+    <div class="split" id="sumSplit" style="color:var(--muted);font-size:13px"></div>
+    <button class="btn" id="checkout">Оформить заказ</button>
+    <div class="done" id="done">Это макет нового сайта, оплата здесь не подключена. Чтобы оформить заказ сейчас, напишите в поддержку: t.me/cortisolsupport.</div>
+  </footer>
+</aside>
+
+<script>
+const CATS = {all:"Все", jeans:"Джинсы", shorts:"Шорты", tees:"Футболки", outer:"Верхняя одежда", acc:"Аксессуары"};
+const FITS = {baggy:"Бэгги", flare:"Морской клёш", bootcut:"Буткат"};
+const STATUS = {pre:"Предзаказ", sold:"Распродано", soon:"Скоро в наличии", in:""};
+
+// Каталог перенесён с cortisoljeans.ru: названия, цены и статусы как на текущем сайте
+const P = [
+  ["p01","Индиго бэгги-джинсы из сырого денима",8990,"jeans","baggy","pre"],
+  ["p02","Коричневые бэгги-джинсы из сырого денима",8990,"jeans","baggy","pre"],
+  ["p03","Чёрная базовая футболка кроп",3290,"tees",null,"in"],
+  ["p04","Белая базовая футболка кроп",3290,"tees",null,"in"],
+  ["p05","Голубые бэгги-джинсы",6990,"jeans","baggy","pre"],
+  ["p06","Голубые джинсы морской клёш",7990,"jeans","flare","in"],
+  ["p07","Чёрная джинсовая рубашка на молнии",7290,"outer",null,"sold"],
+  ["p08","Серая джинсовая рубашка на молнии",7290,"outer",null,"in"],
+  ["p09","Чёрная джинсовая рубашка",6390,"outer",null,"in"],
+  ["p08","Серая джинсовая рубашка",6390,"outer",null,"pre"],
+  ["p11","Шорты из сырого денима",4290,"shorts",null,"in"],
+  ["p12","Чёрные джинсовые шорты",4290,"shorts",null,"in"],
+  ["p13","Чёрный кожаный ремень с металлическим наконечником",4990,"acc",null,"pre"],
+  ["p14","Коричневый кожаный ремень с металлическим наконечником",4990,"acc",null,"pre"],
+  ["p15","Чёрные бэгги-джинсы",6990,"jeans","baggy","sold"],
+  ["p16","Чёрные джинсы морской клёш",7990,"jeans","flare","sold"],
+  ["p17","Бэгги-джинсы из сырого денима",6990,"jeans","baggy","sold"],
+  ["p18","Джинсы морской клёш из сырого денима",7990,"jeans","flare","sold"],
+  ["p19","Чёрные джинсы буткат",7290,"jeans","bootcut","sold"],
+  ["p20","Джинсы буткат из сырого денима",7290,"jeans","bootcut","sold"],
+  ["p21","Джинсовая куртка-бомбер",12890,"outer",null,"sold"],
+  ["p22","Синие бэгги-джинсы",6990,"jeans","baggy","sold"],
+  ["p23","Синие джинсы морской клёш",7990,"jeans","flare","soon"],
+  ["p24","Тёмно-синие бэгги-джинсы",6990,"jeans","baggy","soon"],
+  ["p25","Тёмно-синие джинсы морской клёш",7990,"jeans","flare","soon"],
+  ["p26","Светло-серые бэгги-джинсы",6990,"jeans","baggy","soon"],
+].map(([img,name,price,cat,fit,status],i)=>({id:"k"+i,img:`img/${img}.jpg`,name,price,cat,fit,status}));
+
+const rub = n => n.toLocaleString("ru-RU").replace(/ /g," ") + " ₽";
+const $ = s => document.querySelector(s);
+const state = {cat:"all", fit:null, hideSold:false};
+
+// бегущая строка
+(() => {
+  const bits = ["Предзаказ открыт","<i>●</i>","Отправка из Нижнего Новгорода за 2 дня","<i>●</i>","Бэгги / Клёш / Буткат","<i>●</i>","Долями — 4 платежа","<i>●</i>","Дропы первыми в t.me/cortisoljeans","<i>●</i>"];
+  const s = bits.map(b=>`<span>${b}</span>`).join("");
+  $("#ticker").innerHTML = s + s;
+})();
+
+// фильтры
+function renderChips(){
+  $("#catChips").innerHTML = Object.entries(CATS).map(([k,v])=>{
+    const n = k==="all" ? P.length : P.filter(p=>p.cat===k).length;
+    return `<button class="chip" data-cat="${k}" aria-pressed="${state.cat===k}">${v}<small>${n}</small></button>`;
+  }).join("");
+  const fc = $("#fitChips");
+  fc.hidden = !(state.cat==="all"||state.cat==="jeans");
+  fc.innerHTML = `<span class="label mono">Посадка</span>` + Object.entries(FITS).map(([k,v])=>
+    `<button class="chip" data-fit="${k}" aria-pressed="${state.fit===k}">${v}</button>`).join("");
+}
+function renderGrid(){
+  const list = P.filter(p =>
+    (state.cat==="all" || p.cat===state.cat) &&
+    (!state.fit || p.fit===state.fit) &&
+    (!state.hideSold || p.status!=="sold"));
+  $("#grid").innerHTML = list.map(p=>`
+    <button class="card ${p.status==="sold"?"is-sold":""}" data-id="${p.id}">
+      <div class="ph"><img src="${p.img}" alt="${p.name}" loading="lazy">${STATUS[p.status]?`<span class="tag ${p.status}">${STATUS[p.status]}</span>`:""}</div>
+      <h3>${p.name}</h3>
+      <div class="meta"><span class="price">${rub(p.price)}</span>${p.fit?`<span class="mono fit">${FITS[p.fit]}</span>`:""}</div>
+    </button>`).join("");
+  $("#empty").hidden = list.length>0;
+}
+function render(){renderChips();renderGrid()}
+document.addEventListener("click", e=>{
+  const c = e.target.closest("[data-cat]");
+  if(c){state.cat=c.dataset.cat; if(state.cat!=="all"&&state.cat!=="jeans") state.fit=null; render(); return;}
+  const f = e.target.closest("#fitChips [data-fit], .fit-card");
+  if(f){
+    const k=f.dataset.fit;
+    state.fit = (state.fit===k && !f.classList.contains("fit-card")) ? null : k;
+    if(state.cat!=="all"&&state.cat!=="jeans") state.cat="jeans";
+    render();
+    if(f.classList.contains("fit-card")) $("#catalog").scrollIntoView({behavior:"smooth"});
+    return;
+  }
+  const g = e.target.closest("[data-go-cat]");
+  if(g){state.cat=g.dataset.goCat; state.fit=null; render();}
+  const card = e.target.closest(".card");
+  if(card) openPdp(card.dataset.id);
+});
+$("#hideSold").addEventListener("change", e=>{state.hideSold=e.target.checked; renderGrid()});
+
+// галерея
+$("#galleryGrid").innerHTML = ["g01","g02","g03","g04","g05","g06","g07","g08","g09","g10"]
+  .map(g=>`<figure><img src="img/${g}.jpg" alt="Кадр со съёмки Cortisol Jeans" loading="lazy"></figure>`).join("");
+
+// карточка товара
+const scrim=$("#scrim"), pdp=$("#pdp"), drawer=$("#drawer");
+let cur=null, size=null;
+function sizesFor(p){ return p.cat==="jeans"||p.cat==="shorts" ? ["28","30","32","34","36"] : p.cat==="acc" ? ["105","115"] : ["S","M","L","XL"]; }
+function openPdp(id){
+  cur = P.find(p=>p.id===id); size=null;
+  $("#pdpImg").src=cur.img; $("#pdpImg").alt=cur.name;
+  $("#pdpCat").textContent = CATS[cur.cat] + (cur.fit? " · "+FITS[cur.fit] : "");
+  $("#pdpTitle").textContent = cur.name;
+  $("#pdpPrice").textContent = rub(cur.price);
+  $("#pdpSplit").textContent = "или 4 × " + rub(Math.ceil(cur.price/4)) + " Долями";
+  const sold = cur.status==="sold"||cur.status==="soon";
+  $("#pdpSizes").innerHTML = sizesFor(cur).map(s=>`<button class="size" data-size="${s}" aria-pressed="false" ${sold?"disabled":""}>${s}</button>`).join("");
+  const notes = {
+    pre:"Предзаказ: вещь сейчас на производстве. Отправим сразу после дропа, цена на дропе будет выше.",
+    sold:"Партия распродана. О возвращении модели сообщим в телеграм-канале.",
+    soon:"Скоро в наличии. Дату дропа объявим в телеграм-канале.",
+    in:"В наличии. Отправим из Нижнего Новгорода в течение двух рабочих дней."
+  };
+  $("#pdpNote").textContent = notes[cur.status];
+  const add=$("#pdpAdd");
+  if(sold){ add.textContent="Узнать о дропе в Телеграме"; add.disabled=false; add.dataset.mode="tg"; }
+  else { add.textContent = cur.status==="pre" ? "Оформить предзаказ" : "В корзину"; add.disabled=true; add.dataset.mode="cart"; }
+  pdp.classList.add("on"); scrim.classList.add("on"); $("#pdpClose").focus();
+}
+$("#pdpSizes").addEventListener("click", e=>{
+  const b=e.target.closest(".size"); if(!b) return;
+  size=b.dataset.size;
+  $("#pdpSizes").querySelectorAll(".size").forEach(x=>x.setAttribute("aria-pressed", x===b));
+  $("#pdpAdd").disabled=false;
+});
+$("#pdpAdd").addEventListener("click", ()=>{
+  if($("#pdpAdd").dataset.mode==="tg"){ window.open("https://t.me/cortisoljeans","_blank","noopener"); return; }
+  if(!size) return;
+  const key=cur.id+"|"+size;
+  const ex=cart.find(l=>l.key===key);
+  ex ? ex.qty++ : cart.push({key,id:cur.id,size,qty:1});
+  saveCart(); closeAll(); openDrawer();
+});
+
+// корзина
+let cart=[];
+try{ cart = JSON.parse(localStorage.getItem("cortisol-cart")||"[]"); }catch(_){ cart=[]; }
+function saveCart(){ try{localStorage.setItem("cortisol-cart",JSON.stringify(cart))}catch(_){} renderCart(); }
+function renderCart(){
+  const n = cart.reduce((a,l)=>a+l.qty,0);
+  $("#cartCount").textContent = n;
+  const total = cart.reduce((a,l)=>a+P.find(p=>p.id===l.id).price*l.qty,0);
+  $("#lines").innerHTML = cart.length ? cart.map(l=>{
+    const p=P.find(x=>x.id===l.id);
+    return `<div class="line"><img src="${p.img}" alt=""><div><h4>${p.name}</h4><div class="mono">Размер ${l.size} · ${l.qty} шт${p.status==="pre"?" · предзаказ":""}</div><button class="rm" data-rm="${l.key}">Убрать</button></div><span class="price">${rub(p.price*l.qty)}</span></div>`;
+  }).join("") : `<p style="color:var(--muted);padding:24px 0">Корзина пустая. Выберите вещь в каталоге.</p>`;
+  $("#sum").textContent = rub(total);
+  $("#sumSplit").textContent = total ? "или 4 × " + rub(Math.ceil(total/4)) + " Долями" : "";
+  $("#checkout").disabled = !cart.length;
+}
+$("#lines").addEventListener("click", e=>{
+  const r=e.target.closest("[data-rm]"); if(!r) return;
+  cart = cart.filter(l=>l.key!==r.dataset.rm); saveCart();
+});
+function openDrawer(){ $("#done").classList.remove("on"); drawer.classList.add("on"); scrim.classList.add("on"); }
+function closeAll(){ pdp.classList.remove("on"); drawer.classList.remove("on"); scrim.classList.remove("on"); }
+$("#openCart").addEventListener("click", openDrawer);
+$("#drawerClose").addEventListener("click", closeAll);
+$("#pdpClose").addEventListener("click", closeAll);
+scrim.addEventListener("click", closeAll);
+document.addEventListener("keydown", e=>{ if(e.key==="Escape") closeAll(); });
+$("#checkout").addEventListener("click", ()=>$("#done").classList.add("on"));
+
+render(); renderCart();
+</script>
+</body>
+</html>
