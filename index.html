@@ -27,6 +27,7 @@
     --safe-top: env(safe-area-inset-top, 0px);
   }
   *{box-sizing:border-box}
+  [hidden]{display:none!important}
   body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.5 var(--body);-webkit-font-smoothing:antialiased}
   a{color:inherit}
   img{display:block;max-width:100%}
@@ -193,8 +194,30 @@
   .sheet{position:fixed;z-index:70;background:var(--paper);transition:transform .28s cubic-bezier(.2,.7,.2,1)}
   .pdp{left:50%;top:50%;width:min(980px,calc(100vw - 32px));max-height:calc(100dvh - 48px);overflow:auto;transform:translate(-50%,-46%) scale(.98);opacity:0;pointer-events:none;display:grid;grid-template-columns:1fr 1fr;transition:transform .25s,opacity .2s}
   .pdp.on{transform:translate(-50%,-50%);opacity:1;pointer-events:auto}
-  .pdp .ph{background:var(--studio);aspect-ratio:4/5}
-  .pdp .ph img{width:100%;height:100%;object-fit:cover}
+  .pdp .media{background:var(--studio);display:flex;flex-direction:column;min-width:0}
+  .pdp .stage{position:relative;aspect-ratio:4/5;background:var(--studio);overflow:hidden}
+  .pdp .stage img{width:100%;height:100%;object-fit:contain}
+  #mvWrap{position:absolute;inset:0}
+  #mvWrap model-viewer{width:100%;height:100%;--poster-color:transparent;background:radial-gradient(ellipse at 50% 88%,#d3d4ce 0,var(--studio) 55%)}
+  .modes{position:absolute;left:12px;top:12px;display:flex;background:var(--white);padding:3px;gap:2px}
+  .mode{border:0;background:transparent;padding:6px 12px;font-family:var(--mono);font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+  .mode[aria-selected="true"]{background:var(--ink);color:var(--white)}
+  .mode[hidden]{display:none}
+  .hint{position:absolute;left:0;right:0;bottom:12px;text-align:center;color:var(--ink-2);font-size:10.5px;pointer-events:none}
+  .thumbs{display:flex;gap:6px;padding:8px;overflow-x:auto;scrollbar-width:thin}
+  .thumbs button{flex:none;width:58px;height:58px;padding:0;border:1.5px solid transparent;background:var(--paper)}
+  .thumbs button[aria-current="true"]{border-color:var(--ink)}
+  .thumbs img{width:100%;height:100%;object-fit:cover}
+  .thumbs .t3d{font-family:var(--mono);font-size:12px;font-weight:600;background:var(--ink);color:var(--white)}
+  .chart{border:1px solid var(--line);background:var(--white)}
+  .chart summary{padding:12px 14px;font-size:14px;font-weight:600}
+  .chart summary::after{font-size:16px}
+  .chart-body{padding:0 14px 12px;overflow-x:auto}
+  .chart table{border-collapse:collapse;font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;width:100%}
+  .chart th,.chart td{border:1px solid var(--line);padding:6px 8px;text-align:center}
+  .chart th{background:var(--studio);font-weight:600}
+  .chart td.sel,.chart th.sel{background:var(--ink);color:var(--white)}
+  .chart p{margin:10px 0 0;color:var(--muted);font-size:11px;line-height:1.6;text-transform:none;letter-spacing:0}
   .pdp .body{padding:28px;display:flex;flex-direction:column;gap:18px}
   .pdp h3{font-family:var(--display);font-weight:800;font-size:24px;line-height:1.1;text-transform:uppercase}
   .pdp .price{font-size:20px}
@@ -204,7 +227,7 @@
   .size[aria-pressed="true"]{background:var(--ink);color:var(--white);border-color:var(--ink)}
   .note{font-size:13.5px;color:var(--ink-2);background:var(--studio);padding:12px 14px}
   .x{position:absolute;right:10px;top:10px;width:38px;height:38px;border:0;background:var(--white);font-size:20px;line-height:1}
-  @media (max-width:760px){.pdp{grid-template-columns:1fr}.pdp .ph{aspect-ratio:1}}
+  @media (max-width:760px){.pdp{grid-template-columns:1fr}.pdp .stage{aspect-ratio:1}}
 
   .drawer{top:0;right:0;bottom:0;width:min(420px,100vw);transform:translateX(100%);display:flex;flex-direction:column;padding-top:var(--safe-top)}
   .drawer.on{transform:none}
@@ -440,7 +463,18 @@
 <div class="scrim" id="scrim"></div>
 
 <div class="sheet pdp" id="pdp" role="dialog" aria-modal="true" aria-labelledby="pdpTitle">
-  <div class="ph"><img id="pdpImg" src="" alt=""></div>
+  <div class="media">
+    <div class="stage">
+      <img id="pdpImg" src="" alt="">
+      <div id="mvWrap" hidden></div>
+      <div class="modes" id="modes" role="tablist" aria-label="Вид">
+        <button class="mode" id="modePhoto" role="tab" aria-selected="true">Фото</button>
+        <button class="mode" id="mode3d" role="tab" aria-selected="false">3D</button>
+      </div>
+      <span class="hint mono" id="mvHint" hidden>Тяните, чтобы вращать · колесо — приблизить</span>
+    </div>
+    <div class="thumbs" id="thumbs"></div>
+  </div>
   <div class="body">
     <button class="x" id="pdpClose" aria-label="Закрыть">×</button>
     <span class="mono" id="pdpCat" style="color:var(--muted)"></span>
@@ -450,6 +484,10 @@
       <div class="mono" style="margin-bottom:8px;color:var(--muted)">Размер</div>
       <div class="sizes" id="pdpSizes" role="group" aria-label="Размер"></div>
     </div>
+    <details class="chart" id="chartBox">
+      <summary>Размерная сетка, см</summary>
+      <div class="chart-body"><table id="chartTable"></table><p class="mono" id="chartLegend"></p></div>
+    </details>
     <div class="note" id="pdpNote"></div>
     <button class="btn" id="pdpAdd">В корзину</button>
   </div>
@@ -471,6 +509,27 @@ const CATS = {all:"Все", jeans:"Джинсы", shorts:"Шорты", tees:"Ф�
 const FITS = {baggy:"Бэгги", flare:"Морской клёш", bootcut:"Буткат"};
 const STATUS = {pre:"Предзаказ", sold:"Распродано", soon:"Скоро в наличии", in:""};
 
+// Фото в карточке товара: сколько кадров у каждого (img/g/pXX_NN.jpg)
+const GAL = {p01:11,p02:11,p03:6,p04:4,p05:8,p06:8,p07:7,p08:7,p09:7,p10:7,p11:8,p12:8,p13:6,p14:6,p15:8,p16:8,p17:8,p18:8,p19:8,p20:8,p21:10,p22:9,p23:8,p24:8,p25:8,p26:8};
+// Товары, для которых есть 3D-модель (models/pXX.glb)
+const MODELS = [];
+
+// Размерные сетки с cortisoljeans.ru, см. Возможны отклонения до 2 см.
+const CHARTS = {
+  baggy:  {sizes:["XS","S","M","L","XL","XXL"], rows:{A:[38,40,42,44,46,48],B:[104,106,108,110,112,114],C:[29,30,31,32,33,34]}, legend:"A — полуталия · B — длина · C — выход"},
+  baggy5: {sizes:["XS","S","M","L","XL"], rows:{A:[38,40,42,44,46],B:[104,106,108,110,112],C:[29,30,31,32,33]}, legend:"A — полуталия · B — длина · C — выход"},
+  flare:  {sizes:["XS","S","M","L","XL","XXL"], rows:{A:[38,40,42,44,46,48],B:[104,106,108,110,112,114],C:[34,35,36,37,38,39]}, legend:"A — полуталия · B — длина · C — выход"},
+  bootcut:{sizes:["XS","S","M","L","XL"], rows:{A:[38,40,42,44,46],B:[109,111,113,115,117],C:[26,27,28,29,30]}, legend:"A — полуталия · B — длина · C — выход"},
+  shorts: {sizes:["XS","S","M","L","XL"], rows:{A:[38,40,42,44,46],B:[53,55,57,59,61],C:[32,33,34,35,36]}, legend:"A — полуталия · B — длина · C — выход"},
+  tee:    {sizes:["XS","S","M","L","XL"], rows:{A:[57,59,61,63,65],B:[23,24,25,26,27],C:[56,57,59,61,62],D:[15,16,16.5,17,18]}, legend:"A — длина от высшей точки плеча · B — длина рукава · C — ширина груди под проймой · D — плечо"},
+  zipshirt:{sizes:["S","M","L","XL"], rows:{A:[15.5,16,16.5,17],B:[61,63.5,66,68.5],C:[57.5,60.5,63.5,66.5]}, legend:"A — ширина плеча · B — длина рукава · C — длина изделия по спинке"},
+  shirt:  {sizes:["S","M","L"], rows:{A:[22,22.5,23],B:[25,26,27],C:[57.5,60.5,63.5]}, legend:"A — ширина плеча · B — длина рукава · C — длина изделия по спинке"},
+  bomber: {sizes:["S","M","L"], rows:{A:[55,60,66],B:[79,83,87]}, legend:"A — длина по спине вместе с рибаной · B — длина рукава вместе с плечом и манжетом"},
+};
+const CHART_OF = {p01:"baggy",p02:"baggy",p05:"baggy",p15:"baggy",p17:"baggy",p24:"baggy",p26:"baggy",p22:"baggy5",
+  p06:"flare",p16:"flare",p18:"flare",p23:"flare",p25:"flare",p19:"bootcut",p20:"bootcut",p11:"shorts",p12:"shorts",
+  p03:"tee",p04:"tee",p07:"zipshirt",p08:"zipshirt",p09:"shirt",p10:"shirt",p21:"bomber"};
+
 // Каталог перенесён с cortisoljeans.ru: названия, цены и статусы как на текущем сайте
 const P = [
   ["p01","Индиго бэгги-джинсы из сырого денима",8990,"jeans","baggy","pre"],
@@ -482,7 +541,7 @@ const P = [
   ["p07","Чёрная джинсовая рубашка на молнии",7290,"outer",null,"sold"],
   ["p08","Серая джинсовая рубашка на молнии",7290,"outer",null,"in"],
   ["p09","Чёрная джинсовая рубашка",6390,"outer",null,"in"],
-  ["p08","Серая джинсовая рубашка",6390,"outer",null,"pre"],
+  ["g/p10_01","Серая джинсовая рубашка",6390,"outer",null,"pre"],
   ["p11","Шорты из сырого денима",4290,"shorts",null,"in"],
   ["p12","Чёрные джинсовые шорты",4290,"shorts",null,"in"],
   ["p13","Чёрный кожаный ремень с металлическим наконечником",4990,"acc",null,"pre"],
@@ -499,7 +558,12 @@ const P = [
   ["p24","Тёмно-синие бэгги-джинсы",6990,"jeans","baggy","soon"],
   ["p25","Тёмно-синие джинсы морской клёш",7990,"jeans","flare","soon"],
   ["p26","Светло-серые бэгги-джинсы",6990,"jeans","baggy","soon"],
-].map(([img,name,price,cat,fit,status],i)=>({id:"k"+i,img:`img/${img}.jpg`,name,price,cat,fit,status}));
+].map(([img,name,price,cat,fit,status],i)=>{
+  const g = "p"+String(i+1).padStart(2,"0");
+  return {id:"k"+i, g, img:`img/${img}.jpg`, name, price, cat, fit, status,
+    gallery: Array.from({length:GAL[g]}, (_,n)=>`img/g/${g}_${String(n+1).padStart(2,"0")}.jpg`),
+    chart: CHART_OF[g] || null, model: MODELS.includes(g) ? `models/${g}.glb` : null};
+});
 
 const rub = n => n.toLocaleString("ru-RU").replace(/ /g," ") + " ₽";
 const $ = s => document.querySelector(s);
@@ -563,10 +627,58 @@ $("#galleryGrid").innerHTML = ["g01","g02","g03","g04","g05","g06","g07","g08","
 // карточка товара
 const scrim=$("#scrim"), pdp=$("#pdp"), drawer=$("#drawer");
 let cur=null, size=null;
-function sizesFor(p){ return p.cat==="jeans"||p.cat==="shorts" ? ["28","30","32","34","36"] : p.cat==="acc" ? ["105","115"] : ["S","M","L","XL"]; }
+function sizesFor(p){ return p.chart ? CHARTS[p.chart].sizes : ["Один размер"]; }
+
+// галерея и 3D
+let mvLoaded = false;
+function loadModelViewer(){
+  if(mvLoaded) return; mvLoaded = true;
+  const s=document.createElement("script"); s.type="module";
+  s.src="https://cdn.jsdelivr.net/npm/@google/model-viewer@4.0.0/dist/model-viewer.min.js";
+  document.head.appendChild(s);
+}
+function showPhoto(i){
+  $("#mvWrap").hidden = true; $("#mvHint").hidden = true; $("#pdpImg").hidden = false;
+  $("#pdpImg").src = cur.gallery[i] || cur.img;
+  $("#modePhoto").setAttribute("aria-selected","true"); $("#mode3d").setAttribute("aria-selected","false");
+  $("#thumbs").querySelectorAll("button").forEach(b=>b.setAttribute("aria-current", b.dataset.i==String(i)));
+}
+function show3d(){
+  if(!cur.model) return;
+  loadModelViewer();
+  const w=$("#mvWrap");
+  if(w.dataset.src!==cur.model){
+    w.innerHTML = `<model-viewer src="${cur.model}" alt="3D-модель: ${cur.name}" camera-controls auto-rotate auto-rotate-delay="600" rotation-per-second="24deg" interaction-prompt="none" shadow-intensity="0.9" shadow-softness="0.8" exposure="1.05" environment-image="neutral" camera-orbit="0deg 82deg auto" min-camera-orbit="auto 20deg auto" max-camera-orbit="auto 100deg auto" field-of-view="26deg"></model-viewer>`;
+    w.dataset.src = cur.model;
+  }
+  w.hidden = false; $("#mvHint").hidden = false; $("#pdpImg").hidden = true;
+  $("#modePhoto").setAttribute("aria-selected","false"); $("#mode3d").setAttribute("aria-selected","true");
+  $("#thumbs").querySelectorAll("button").forEach(b=>b.setAttribute("aria-current", b.dataset.i==="3d"));
+}
+$("#modePhoto").addEventListener("click", ()=>showPhoto(0));
+$("#mode3d").addEventListener("click", show3d);
+$("#thumbs").addEventListener("click", e=>{
+  const b=e.target.closest("button"); if(!b) return;
+  b.dataset.i==="3d" ? show3d() : showPhoto(+b.dataset.i);
+});
+function renderChart(){
+  const box=$("#chartBox");
+  if(!cur.chart){ box.hidden=true; return; }
+  box.hidden=false;
+  const c=CHARTS[cur.chart];
+  $("#chartTable").innerHTML =
+    `<tr><th></th>${c.sizes.map(s=>`<th class="${s===size?"sel":""}">${s}</th>`).join("")}</tr>` +
+    Object.entries(c.rows).map(([k,v])=>`<tr><th>${k}</th>${v.map((x,i)=>`<td class="${c.sizes[i]===size?"sel":""}">${String(x).replace(".",",")}</td>`).join("")}</tr>`).join("");
+  $("#chartLegend").textContent = c.legend + ". Возможны отклонения по замерам до 2 см.";
+}
+
 function openPdp(id){
   cur = P.find(p=>p.id===id); size=null;
-  $("#pdpImg").src=cur.img; $("#pdpImg").alt=cur.name;
+  $("#pdpImg").alt=cur.name;
+  $("#thumbs").innerHTML = (cur.model?`<button data-i="3d" class="t3d" aria-label="3D-модель">3D</button>`:"") +
+    cur.gallery.map((src,i)=>`<button data-i="${i}" aria-label="Фото ${i+1}"><img src="${src}" alt="" loading="lazy"></button>`).join("");
+  $("#modes").hidden = !cur.model;
+  cur.model ? show3d() : showPhoto(0);
   $("#pdpCat").textContent = CATS[cur.cat] + (cur.fit? " · "+FITS[cur.fit] : "");
   $("#pdpTitle").textContent = cur.name;
   $("#pdpPrice").textContent = rub(cur.price);
@@ -580,6 +692,7 @@ function openPdp(id){
     in:"В наличии. Отправим из Нижнего Новгорода в течение двух рабочих дней."
   };
   $("#pdpNote").textContent = notes[cur.status];
+  renderChart();
   const add=$("#pdpAdd");
   if(sold){ add.textContent="Узнать о дропе в Телеграме"; add.disabled=false; add.dataset.mode="tg"; }
   else { add.textContent = cur.status==="pre" ? "Оформить предзаказ" : "В корзину"; add.disabled=true; add.dataset.mode="cart"; }
@@ -590,6 +703,7 @@ $("#pdpSizes").addEventListener("click", e=>{
   size=b.dataset.size;
   $("#pdpSizes").querySelectorAll(".size").forEach(x=>x.setAttribute("aria-pressed", x===b));
   $("#pdpAdd").disabled=false;
+  renderChart();
 });
 $("#pdpAdd").addEventListener("click", ()=>{
   if($("#pdpAdd").dataset.mode==="tg"){ window.open("https://t.me/cortisoljeans","_blank","noopener"); return; }
